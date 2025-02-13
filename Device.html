@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Device Information</title>
+  <script>
+    window.onload = async function() {
+      // Get the 'id' from the URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const deviceId = urlParams.get("id");
+
+        console.log("ID: ", deviceId);
+
+      if (!deviceId) {
+        document.getElementById("info").innerHTML = "No ID provided!";
+        return;
+      }
+
+      // Fetch data from the Google Apps Script URL
+      const apiUrl = "https://script.google.com/macros/s/AKfycbyEuQ_ymxOqSOm0XIsc6TepKVnXxxMoBIBIAX3r7JRl777WkHO5P39mDv7h93uB2Y_o/exec?id=" + deviceId;
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.error) {
+          document.getElementById("info").innerHTML = "Device not found!";
+        } else {
+          // Display the device info
+          document.getElementById("name").innerText = data.name;
+          document.getElementById("model").innerText = data.model;
+          document.getElementById("location").innerText = data.location;
+          document.getElementById("date").innerText = data.date;
+          document.getElementById("info_link").innerHTML = `<a href="${data.info}" target="_blank">More Info</a>`;
+        }
+      } catch (error) {
+        document.getElementById("info").innerHTML = "Error fetching data!";
+        console.error(error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>Device Information</h2>
+  <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+    <tr>
+      <th>Name</th>
+      <th>Model</th>
+      <th>Location</th>
+      <th>Date</th>
+      <th>Info Link</th>
+    </tr>
+    <tr>
+      <td id="name"></td>
+      <td id="model"></td>
+      <td id="location"></td>
+      <td id="date"></td>
+      <td id="info_link"></td>
+    </tr>
+  </table>
+  <div id="info" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+</body>
+</html>
